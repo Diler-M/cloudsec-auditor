@@ -32,3 +32,27 @@ def list_buckets():
 
         except Exception as e:
             print(f"WARN: {bucket_name} has no Public Access Block configuration")
+
+def check_bucket_encryption():
+    s3 = boto3.client("s3")
+
+    buckets = s3.list_buckets()
+
+    print("\nS3 Bucket Encryption Audit:\n")
+
+    for bucket in buckets["Buckets"]:
+        bucket_name = bucket["Name"]
+
+        try:
+            response = s3.get_bucket_encryption(
+                Bucket=bucket_name
+            )
+
+            rules = response["ServerSideEncryptionConfiguration"]["Rules"]
+
+            encryption_type = rules[0]["ApplyServerSideEncryptionByDefault"]["SSEAlgorithm"]
+
+            print(f"PASS: {bucket_name} has default encryption enabled using {encryption_type}")
+
+        except Exception:
+            print(f"FAIL: {bucket_name} does not have default encryption enabled")
