@@ -6,7 +6,29 @@ def list_buckets():
 
     buckets = s3.list_buckets()
 
-    print("\nS3 Buckets Found:\n")
+    print("\nS3 Bucket Public Access Audit:\n")
 
     for bucket in buckets["Buckets"]:
-        print(f"- {bucket['Name']}")
+
+        bucket_name = bucket["Name"]
+
+        try:
+            response = s3.get_public_access_block(
+                Bucket=bucket_name
+            )
+
+            config = response["PublicAccessBlockConfiguration"]
+
+            if (
+                config["BlockPublicAcls"]
+                and config["IgnorePublicAcls"]
+                and config["BlockPublicPolicy"]
+                and config["RestrictPublicBuckets"]
+            ):
+                print(f"PASS: {bucket_name} blocks public access")
+
+            else:
+                print(f"FAIL: {bucket_name} may allow public access")
+
+        except Exception as e:
+            print(f"WARN: {bucket_name} has no Public Access Block configuration")
