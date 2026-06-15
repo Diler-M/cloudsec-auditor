@@ -15,7 +15,12 @@
 # S3 BUCKET ENUMERATION
 # ==================================
 
-from checks.s3_checks import list_buckets, check_bucket_encryption
+from checks.s3_checks import (
+    list_buckets,
+    check_bucket_encryption,
+    check_bucket_versioning,
+)
 
 list_buckets()
 check_bucket_encryption()
+check_bucket_versioning()

@@ -56,3 +56,24 @@ def check_bucket_encryption():
 
         except Exception:
             print(f"FAIL: {bucket_name} does not have default encryption enabled")
+
+def check_bucket_versioning():
+    s3 = boto3.client("s3")
+
+    buckets = s3.list_buckets()
+
+    print("\nS3 Bucket Versioning Audit:\n")
+
+    for bucket in buckets["Buckets"]:
+        bucket_name = bucket["Name"]
+
+        response = s3.get_bucket_versioning(
+            Bucket=bucket_name
+        )
+
+        status = response.get("Status", "Disabled")
+
+        if status == "Enabled":
+            print(f"PASS: {bucket_name} has versioning enabled")
+        else:
+            print(f"WARN: {bucket_name} does not have versioning enabled")
