@@ -1,7 +1,21 @@
-import boto3
+# ==================================
+# AWS CONNECTIVITY TEST
+# ==================================
 
-sts = boto3.client("sts")
+#import boto3
 
-identity = sts.get_caller_identity()
+# sts = boto3.client("sts")
 
-print(identity)
+# identity = sts.get_caller_identity()
+
+# print(f"Connected to AWS Account: {identity['Account']}")
+# print(f"Authenticated as: {identity['Arn']}")
+
+# ==================================
+# S3 BUCKET ENUMERATION
+# ==================================
+
+from checks.s3_checks import list_buckets
+
+list_buckets()
+
