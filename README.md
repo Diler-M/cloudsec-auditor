@@ -1,20 +1,27 @@
 # CloudSec Auditor
 
-CloudSec Auditor is a Python and Boto3-based AWS security auditing tool that automates common cloud security checks against an AWS account.
+CloudSec Auditor is a Python and Boto3-based AWS security auditing tool designed to automate common cloud security checks across an AWS environment.
 
-The aim of this project is to demonstrate practical cloud security automation using AWS APIs instead of relying solely on manual console checks.
+The aim of this project is to demonstrate practical Cloud Security automation by interacting directly with AWS APIs instead of relying solely on manual console checks.
 
 ---
 
-## Features
+## Current Features
 
 ### S3 Auditing
 
-- ✅ Enumerate all S3 buckets
+- ✅ Enumerate S3 buckets
 - ✅ Check Block Public Access configuration
 - ✅ Check default server-side encryption
 - ✅ Check bucket versioning
-- ✅ Summary of PASS / WARN / FAIL findings
+
+### IAM Auditing
+
+- ✅ Audit IAM users for MFA enforcement
+
+### Reporting
+
+- ✅ PASS / WARN / FAIL summary
 
 ---
 
@@ -22,28 +29,43 @@ The aim of this project is to demonstrate practical cloud security automation us
 
 ### IAM
 
-- ⬜ Users without MFA
-- ⬜ Old access keys
-- ⬜ Administrator accounts
+- ⬜ Access key age audit
+- ⬜ Administrator account detection
 - ⬜ Unused IAM users
+- ⬜ Password policy audit
 
 ### EC2
 
 - ⬜ Security Groups exposing SSH (22)
 - ⬜ Security Groups exposing RDP (3389)
-- ⬜ Unencrypted EBS volumes
+- ⬜ Public EC2 instances
+- ⬜ EBS encryption audit
+- ⬜ IMDSv2 enforcement
+
+### S3
+
+- ⬜ Bucket policy analysis
+- ⬜ Access logging audit
+- ⬜ KMS encryption validation
+- ⬜ Lifecycle policy audit
 
 ### GuardDuty
 
-- ⬜ GuardDuty enabled
+- ⬜ GuardDuty status
 - ⬜ Active findings
 - ⬜ Severity summary
+
+### CloudTrail
+
+- ⬜ CloudTrail enabled
+- ⬜ Multi-region trail
+- ⬜ Log validation enabled
 
 ### Reporting
 
 - ⬜ JSON report
 - ⬜ CSV report
-- ⬜ HTML report
+- ⬜ HTML dashboard
 
 ---
 
@@ -58,7 +80,7 @@ The aim of this project is to demonstrate practical cloud security automation us
 
 ---
 
-## Current Example Output
+## Example Output
 
 ```text
 S3 Bucket Public Access Audit
@@ -73,9 +95,22 @@ S3 Bucket Versioning Audit
 
 WARN: terraform-statefile-diler does not have versioning enabled
 
+IAM MFA Audit
+
+PASS: Diler has MFA enabled
+
 CloudSec Auditor Summary
 
-PASS: 2
+PASS: 3
 WARN: 1
 FAIL: 0
 ```
+
+---
+
+## Project Goals
+
+- Learn Python through practical AWS automation.
+- Develop real-world Cloud Security auditing capabilities.
+- Demonstrate hands-on experience with AWS APIs using Boto3.
+- Build a portfolio project representative of work performed by Cloud Security and DevSecOps Engineers.
