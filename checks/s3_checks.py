@@ -1,7 +1,7 @@
 import boto3
 
 
-def list_buckets():
+def check_bucket_public_access(summary):
     s3 = boto3.client("s3")
 
     buckets = s3.list_buckets()
@@ -9,7 +9,6 @@ def list_buckets():
     print("\nS3 Bucket Public Access Audit:\n")
 
     for bucket in buckets["Buckets"]:
-
         bucket_name = bucket["Name"]
 
         try:
@@ -26,14 +25,17 @@ def list_buckets():
                 and config["RestrictPublicBuckets"]
             ):
                 print(f"PASS: {bucket_name} blocks public access")
-
+                summary["PASS"] += 1
             else:
                 print(f"FAIL: {bucket_name} may allow public access")
+                summary["FAIL"] += 1
 
-        except Exception as e:
+        except Exception:
             print(f"WARN: {bucket_name} has no Public Access Block configuration")
+            summary["WARN"] += 1
 
-def check_bucket_encryption():
+
+def check_bucket_encryption(summary):
     s3 = boto3.client("s3")
 
     buckets = s3.list_buckets()
@@ -53,11 +55,14 @@ def check_bucket_encryption():
             encryption_type = rules[0]["ApplyServerSideEncryptionByDefault"]["SSEAlgorithm"]
 
             print(f"PASS: {bucket_name} has default encryption enabled using {encryption_type}")
+            summary["PASS"] += 1
 
         except Exception:
             print(f"FAIL: {bucket_name} does not have default encryption enabled")
+            summary["FAIL"] += 1
 
-def check_bucket_versioning():
+
+def check_bucket_versioning(summary):
     s3 = boto3.client("s3")
 
     buckets = s3.list_buckets()
@@ -75,5 +80,7 @@ def check_bucket_versioning():
 
         if status == "Enabled":
             print(f"PASS: {bucket_name} has versioning enabled")
+            summary["PASS"] += 1
         else:
             print(f"WARN: {bucket_name} does not have versioning enabled")
+            summary["WARN"] += 1

@@ -16,11 +16,22 @@
 # ==================================
 
 from checks.s3_checks import (
-    list_buckets,
+    check_bucket_public_access,
     check_bucket_encryption,
     check_bucket_versioning,
 )
 
-list_buckets()
-check_bucket_encryption()
-check_bucket_versioning()
+summary = {
+    "PASS": 0,
+    "WARN": 0,
+    "FAIL": 0
+}
+
+check_bucket_public_access(summary)
+check_bucket_encryption(summary)
+check_bucket_versioning(summary)
+
+print("\nCloudSec Auditor Summary:\n")
+print(f"PASS: {summary['PASS']}")
+print(f"WARN: {summary['WARN']}")
+print(f"FAIL: {summary['FAIL']}")
