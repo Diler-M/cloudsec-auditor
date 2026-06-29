@@ -6,7 +6,10 @@ from checks.s3_checks import (
 
 from checks.iam_checks import (
     check_iam_mfa,
+    check_access_key_age,
 )
+
+
 
 summary = {
     "PASS": 0,
@@ -19,6 +22,7 @@ check_bucket_encryption(summary)
 check_bucket_versioning(summary)
 
 check_iam_mfa(summary)
+check_access_key_age(summary)
 
 print("\nCloudSec Auditor Summary:\n")
 print(f"PASS: {summary['PASS']}")

@@ -1,71 +1,76 @@
 # CloudSec Auditor
 
-CloudSec Auditor is a Python and Boto3-based AWS security auditing tool designed to automate common cloud security checks across an AWS environment.
+CloudSec Auditor is a Python-based AWS security auditing tool built with Boto3.
 
-The aim of this project is to demonstrate practical Cloud Security automation by interacting directly with AWS APIs instead of relying solely on manual console checks.
+The project automates common cloud security checks across AWS services, helping identify security misconfigurations and compliance issues without relying on manual inspection in the AWS Console.
+
+This project is being built as a practical learning exercise in Python while demonstrating real-world Cloud Security and DevSecOps automation techniques.
 
 ---
 
-## Current Features
+## Features
 
-### S3 Auditing
+### Amazon S3
 
 - ✅ Enumerate S3 buckets
-- ✅ Check Block Public Access configuration
-- ✅ Check default server-side encryption
-- ✅ Check bucket versioning
+- ✅ Audit Block Public Access configuration
+- ✅ Audit default server-side encryption
+- ✅ Audit bucket versioning
 
-### IAM Auditing
+### AWS IAM
 
-- ✅ Audit IAM users for MFA enforcement
+- ✅ Audit MFA enforcement
+- ✅ Audit IAM access key age
 
 ### Reporting
 
-- ✅ PASS / WARN / FAIL summary
+- ✅ PASS / WARN / FAIL finding summary
 
 ---
 
 ## Planned Features
 
-### IAM
+### Amazon S3
 
-- ⬜ Access key age audit
+- ⬜ Bucket policy analysis
+- ⬜ Lifecycle policy audit
+- ⬜ Access logging audit
+- ⬜ KMS encryption validation
+
+### AWS IAM
+
 - ⬜ Administrator account detection
-- ⬜ Unused IAM users
+- ⬜ Inactive IAM users
 - ⬜ Password policy audit
+- ⬜ Console login audit
 
-### EC2
+### Amazon EC2
 
 - ⬜ Security Groups exposing SSH (22)
 - ⬜ Security Groups exposing RDP (3389)
 - ⬜ Public EC2 instances
-- ⬜ EBS encryption audit
+- ⬜ Unencrypted EBS volumes
 - ⬜ IMDSv2 enforcement
 
-### S3
+### AWS GuardDuty
 
-- ⬜ Bucket policy analysis
-- ⬜ Access logging audit
-- ⬜ KMS encryption validation
-- ⬜ Lifecycle policy audit
-
-### GuardDuty
-
-- ⬜ GuardDuty status
+- ⬜ GuardDuty enabled
 - ⬜ Active findings
 - ⬜ Severity summary
 
-### CloudTrail
+### AWS CloudTrail
 
 - ⬜ CloudTrail enabled
 - ⬜ Multi-region trail
-- ⬜ Log validation enabled
+- ⬜ Log file validation
+- ⬜ S3 logging destination audit
 
 ### Reporting
 
-- ⬜ JSON report
-- ⬜ CSV report
+- ⬜ JSON report generation
+- ⬜ CSV report generation
 - ⬜ HTML dashboard
+- ⬜ Security score
 
 ---
 
@@ -99,18 +104,48 @@ IAM MFA Audit
 
 PASS: Diler has MFA enabled
 
+IAM Access Key Age Audit
+
+PASS: Diler access key is 8 days old
+
 CloudSec Auditor Summary
 
-PASS: 3
+PASS: 4
 WARN: 1
 FAIL: 0
 ```
 
 ---
 
-## Project Goals
+## Project Structure
 
-- Learn Python through practical AWS automation.
-- Develop real-world Cloud Security auditing capabilities.
-- Demonstrate hands-on experience with AWS APIs using Boto3.
-- Build a portfolio project representative of work performed by Cloud Security and DevSecOps Engineers.
+```
+cloudsec-auditor/
+│
+├── checks/
+│   ├── iam_checks.py
+│   └── s3_checks.py
+│
+├── main.py
+├── requirements.txt
+├── README.md
+└── LICENSE
+```
+
+---
+
+## Learning Objectives
+
+This project is helping me develop practical experience in:
+
+- Python programming
+- AWS SDK (Boto3)
+- AWS Identity & Access Management (IAM)
+- Cloud security automation
+- Infrastructure auditing
+
+---
+
+## Future Vision
+
+The long-term goal is to evolve CloudSec Auditor into a lightweight AWS security auditing framework capable of auditing multiple AWS services and generating structured compliance reports suitable for Cloud Security and DevSecOps environments.
