@@ -13,6 +13,10 @@ from checks.ec2_checks import (
     check_ec2_sg
 )
 
+from checks.cloudtrail_checks import (
+    check_cloudtrail_enabled
+)
+
 summary = {
     "PASS": 0,
     "WARN": 0,
@@ -27,6 +31,8 @@ check_iam_mfa(summary)
 check_access_key_age(summary)
 
 check_ec2_sg(summary)
+
+check_cloudtrail_enabled(summary)
 
 print("\nCloudSec Auditor Summary:\n")
 print(f"PASS: {summary['PASS']}")
