@@ -4,11 +4,11 @@ CloudSec Auditor is a Python-based AWS security auditing tool built using Boto3.
 
 The project automates common AWS security checks to identify misconfigurations, improve cloud security posture, and demonstrate practical Cloud Security and DevSecOps automation skills.
 
-Rather than manually checking resources in the AWS Console, CloudSec Auditor interacts directly with AWS APIs to perform security audits across multiple AWS services.
+Rather than manually inspecting resources through the AWS Console, CloudSec Auditor queries AWS APIs directly to perform automated security audits across multiple AWS services.
 
 ---
 
-## Features
+## Current Features
 
 ### Amazon S3
 
@@ -24,12 +24,13 @@ Rather than manually checking resources in the AWS Console, CloudSec Auditor int
 
 ### Amazon EC2
 
-- ✅ Audit Security Groups exposing SSH (22) to the internet
-- ✅ Audit Security Groups exposing RDP (3389) to the internet
+- ✅ Audit Security Groups exposing SSH (22)
+- ✅ Audit Security Groups exposing RDP (3389)
+- ✅ Multi-region Security Group scanning
 
 ### Reporting
 
-- ✅ PASS / WARN / FAIL finding summary
+- ✅ PASS / WARN / FAIL summary
 
 ---
 
@@ -41,6 +42,7 @@ Rather than manually checking resources in the AWS Console, CloudSec Auditor int
 - ⬜ Lifecycle policy audit
 - ⬜ Access logging audit
 - ⬜ KMS encryption validation
+- ⬜ Public bucket policy detection
 
 ### AWS IAM
 
@@ -48,6 +50,7 @@ Rather than manually checking resources in the AWS Console, CloudSec Auditor int
 - ⬜ Unused IAM users
 - ⬜ Password policy audit
 - ⬜ Console login audit
+- ⬜ IAM role audit
 
 ### Amazon EC2
 
@@ -55,6 +58,8 @@ Rather than manually checking resources in the AWS Console, CloudSec Auditor int
 - ⬜ EBS encryption audit
 - ⬜ IMDSv2 enforcement
 - ⬜ Unattached Security Groups
+- ⬜ Security Groups allowing all traffic
+- ⬜ Internet-facing instances
 
 ### AWS GuardDuty
 
@@ -75,7 +80,7 @@ Rather than manually checking resources in the AWS Console, CloudSec Auditor int
 - ⬜ CSV report generation
 - ⬜ HTML dashboard
 - ⬜ Security score
-- ⬜ Severity classification
+- ⬜ Finding severity (Low / Medium / High / Critical)
 
 ---
 
@@ -111,16 +116,16 @@ PASS: Diler has MFA enabled
 
 IAM Access Key Age Audit
 
-WARN: Diler access key is 571 days old
+PASS: Diler access key is 0 days old
 
 EC2 Security Group Audit
 
-WARN: launch-wizard-1 (sg-0a788f30fc5c27072) allows SSH from 0.0.0.0/0
+WARN: eu-west-1 - launch-wizard-1 (sg-0a788f30fc5c27072) allows SSH from 0.0.0.0/0
 
 CloudSec Auditor Summary
 
-PASS: 3
-WARN: 3
+PASS: 4
+WARN: 2
 FAIL: 0
 ```
 
@@ -136,8 +141,8 @@ cloudsec-auditor/
 │   ├── iam_checks.py
 │   └── s3_checks.py
 │
-├── reports/
 ├── docs/
+├── reports/
 ├── main.py
 ├── requirements.txt
 ├── README.md
@@ -146,17 +151,16 @@ cloudsec-auditor/
 
 ---
 
-## Learning Objectives
-
-This project is helping me develop practical experience with:
+## Skills Demonstrated
 
 - Python programming
-- AWS SDK for Python (Boto3)
+- AWS SDK (Boto3)
 - AWS API automation
 - Cloud Security auditing
-- AWS Identity & Access Management (IAM)
-- Amazon S3 Security
-- Amazon EC2 Security
+- IAM security
+- Amazon S3 security
+- Amazon EC2 security
+- Multi-region AWS resource discovery
 - Secure coding practices
 - Git & GitHub workflows
 
@@ -164,4 +168,6 @@ This project is helping me develop practical experience with:
 
 ## Future Vision
 
-The long-term goal is to evolve CloudSec Auditor into a lightweight AWS security auditing framework capable of auditing multiple AWS services, producing structured compliance reports, and demonstrating real-world Cloud Security and DevSecOps engineering skills.
+The goal is to evolve CloudSec Auditor into a lightweight AWS security auditing framework capable of assessing multiple AWS services, generating structured compliance reports, and demonstrating practical Cloud Security and DevSecOps engineering techniques.
+
+Future versions will include richer reporting, severity classification, automated compliance checks, and support for additional AWS security services.
