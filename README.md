@@ -2,18 +2,18 @@
 
 CloudSec Auditor is a Python-based AWS security auditing tool built using **Boto3**.
 
-The project automates common AWS security checks across multiple AWS services to identify misconfigurations, improve cloud security posture, and demonstrate practical Cloud Security and DevSecOps engineering skills.
+It automates common AWS security checks across multiple AWS services to identify misconfigurations, improve cloud security posture, and demonstrate practical Cloud Security and DevSecOps engineering skills.
 
-Rather than manually inspecting resources through the AWS Console, CloudSec Auditor queries AWS APIs directly to perform automated security audits.
+Instead of manually inspecting resources in the AWS Console, CloudSec Auditor queries AWS APIs directly and performs automated security audits.
 
 ---
 
-# ✨ Current Features
+# ✨ Features
 
 ## Amazon S3
 
 - ✅ Enumerate S3 buckets
-- ✅ Audit Block Public Access configuration
+- ✅ Audit Block Public Access
 - ✅ Audit default server-side encryption
 - ✅ Audit bucket versioning
 
@@ -32,81 +32,24 @@ Rather than manually inspecting resources through the AWS Console, CloudSec Audi
 
 - ✅ Audit CloudTrail trail configuration
 
+## Command Line Interface
+
+- ✅ Run individual service audits
+- ✅ Run all audits with a single command
+
+Supported commands:
+
+```bash
+python main.py --all
+python main.py --s3
+python main.py --iam
+python main.py --ec2
+python main.py --cloudtrail
+```
+
 ## Reporting
 
 - ✅ PASS / WARN / FAIL summary
-
----
-
-# 🚧 Roadmap
-
-## Amazon S3
-
-- ⬜ Bucket policy analysis
-- ⬜ Lifecycle policy audit
-- ⬜ Access logging audit
-- ⬜ KMS encryption validation
-
-## AWS IAM
-
-- ⬜ Administrator account detection
-- ⬜ Unused IAM users
-- ⬜ Password policy audit
-- ⬜ Console login audit
-- ⬜ IAM role audit
-
-## Amazon EC2
-
-- ⬜ Public EC2 instance detection
-- ⬜ Security Groups allowing all traffic
-- ⬜ EBS encryption audit
-- ⬜ IMDSv2 enforcement
-- ⬜ Unattached Security Groups
-
-## AWS CloudTrail
-
-- ⬜ Multi-region trail validation
-- ⬜ Log file validation
-- ⬜ Management events enabled
-- ⬜ Data events enabled
-
-## AWS GuardDuty
-
-- ⬜ GuardDuty enabled
-- ⬜ Active findings
-- ⬜ Severity summary
-
-## AWS Security Hub
-
-- ⬜ Security Hub enabled
-- ⬜ Security score
-- ⬜ Failed security controls
-
-## AWS Config
-
-- ⬜ AWS Config enabled
-- ⬜ Compliance rules
-- ⬜ Non-compliant resources
-
-## Reporting
-
-- ⬜ JSON reports
-- ⬜ CSV reports
-- ⬜ HTML dashboard
-- ⬜ Finding severity (Low / Medium / High / Critical)
-- ⬜ CLI options (`--s3`, `--iam`, `--ec2`, `--all`)
-- ⬜ Logging
-
----
-
-# 🛠 Technologies
-
-- Python
-- Boto3
-- AWS CLI
-- Git
-- GitHub
-- VS Code
 
 ---
 
@@ -135,7 +78,7 @@ PASS: Diler access key is 0 days old
 
 EC2 Security Group Audit
 
-WARN: eu-west-1 - launch-wizard-1 (sg-0a788f30fc5c27072) allows SSH from 0.0.0.0/0
+WARN: eu-west-1 - launch-wizard-1 (sg-xxxxxxxxxxxxxxxxx) allows SSH from 0.0.0.0/0
 
 CloudTrail Audit
 
@@ -147,6 +90,17 @@ PASS: 5
 WARN: 2
 FAIL: 0
 ```
+
+---
+
+# 🛠 Technologies
+
+- Python
+- Boto3
+- AWS CLI
+- Git
+- GitHub
+- VS Code
 
 ---
 
@@ -171,29 +125,80 @@ cloudsec-auditor/
 
 ---
 
+# 🚧 Roadmap
+
+## Amazon S3
+
+- ⬜ Bucket policy analysis
+- ⬜ Lifecycle policy audit
+- ⬜ Access logging audit
+- ⬜ KMS encryption validation
+
+## AWS IAM
+
+- ⬜ Administrator account detection
+- ⬜ Unused IAM users
+- ⬜ Password policy audit
+- ⬜ Console login audit
+
+## Amazon EC2
+
+- ⬜ Public EC2 instance detection
+- ⬜ EBS encryption audit
+- ⬜ IMDSv2 enforcement
+- ⬜ Security Groups allowing all traffic
+
+## AWS CloudTrail
+
+- ⬜ Multi-region trail validation
+- ⬜ Log file validation
+- ⬜ Management event validation
+- ⬜ Data event validation
+
+## AWS GuardDuty
+
+- ⬜ GuardDuty enabled
+- ⬜ Active findings
+- ⬜ Finding severity summary
+
+## AWS Security Hub
+
+- ⬜ Security Hub enabled
+- ⬜ Failed security controls
+
+## AWS Config
+
+- ⬜ AWS Config enabled
+- ⬜ Compliance rule audit
+
+## Reporting
+
+- ⬜ JSON report generation
+- ⬜ CSV report generation
+- ⬜ HTML dashboard
+- ⬜ Finding severity
+- ⬜ Logging
+
+---
+
 # 🎯 Skills Demonstrated
 
 - Python programming
-- AWS SDK for Python (Boto3)
+- AWS SDK (Boto3)
 - AWS API automation
 - Cloud Security auditing
-- Amazon S3 security
-- IAM security
-- EC2 networking and Security Groups
-- AWS CloudTrail
-- Multi-region resource discovery
-- Secure coding practices
+- Amazon S3 Security
+- IAM Security
+- EC2 Security
+- CloudTrail
+- Multi-region AWS resource discovery
+- Command-line tooling
 - Git & GitHub workflows
 
 ---
 
-# 🚀 Project Goals
+# 🚀 Project Vision
 
-CloudSec Auditor is being developed to demonstrate the type of automation a Cloud Security or DevSecOps Engineer performs in production environments.
+CloudSec Auditor is being developed as a practical Cloud Security portfolio project that demonstrates the type of automation performed by Cloud Security and DevSecOps Engineers.
 
-The long-term vision is to evolve the project into a lightweight AWS security auditing framework capable of:
-
-- Auditing multiple AWS services
-- Producing structured compliance reports
-- Identifying security misconfigurations
-- Helping improve cloud security posture
+The long-term goal is to evolve the project into a lightweight AWS security auditing framework capable of auditing multiple AWS services, producing structured compliance reports and identifying security misconfigurations across AWS environments.
