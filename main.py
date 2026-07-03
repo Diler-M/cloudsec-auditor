@@ -14,6 +14,8 @@ from checks.iam_checks import (
 from checks.ec2_checks import check_ec2_sg
 from checks.cloudtrail_checks import check_cloudtrail_enabled
 
+from checks.guardduty_checks import check_guardduty_enabled
+
 
 def print_summary(summary):
     print("\nCloudSec Auditor Summary:\n")
@@ -52,6 +54,12 @@ def main():
     )
 
     parser.add_argument(
+        "--guardduty",
+        action="store_true",
+        help="Run GuardDuty security checks"
+    ) 
+
+    parser.add_argument(
         "--all",
         action="store_true",
         help="Run all security checks"
@@ -79,6 +87,9 @@ def main():
 
     if args.cloudtrail or args.all:
         check_cloudtrail_enabled(summary)
+
+    if args.guardduty or args.all:
+        check_guardduty_enabled(summary)
 
     print_summary(summary)
 

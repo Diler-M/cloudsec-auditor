@@ -4,15 +4,12 @@ CloudSec Auditor is a Python-based AWS security auditing tool built using **Boto
 
 It automates common AWS security checks across multiple AWS services to identify misconfigurations, improve cloud security posture, and demonstrate practical Cloud Security and DevSecOps engineering skills.
 
-Instead of manually inspecting resources in the AWS Console, CloudSec Auditor queries AWS APIs directly and performs automated security audits.
-
 ---
 
 # ✨ Features
 
 ## Amazon S3
 
-- ✅ Enumerate S3 buckets
 - ✅ Audit Block Public Access
 - ✅ Audit default server-side encryption
 - ✅ Audit bucket versioning
@@ -32,12 +29,11 @@ Instead of manually inspecting resources in the AWS Console, CloudSec Auditor qu
 
 - ✅ Audit CloudTrail trail configuration
 
+## AWS GuardDuty
+
+- ✅ Multi-region GuardDuty enabled audit
+
 ## Command Line Interface
-
-- ✅ Run individual service audits
-- ✅ Run all audits with a single command
-
-Supported commands:
 
 ```bash
 python main.py --all
@@ -45,6 +41,7 @@ python main.py --s3
 python main.py --iam
 python main.py --ec2
 python main.py --cloudtrail
+python main.py --guardduty
 ```
 
 ## Reporting
@@ -84,10 +81,14 @@ CloudTrail Audit
 
 PASS: CloudTrail trail found: management-events
 
+GuardDuty Audit
+
+WARN: GuardDuty missing from 17 region(s)
+
 CloudSec Auditor Summary
 
 PASS: 5
-WARN: 2
+WARN: 3
 FAIL: 0
 ```
 
@@ -112,6 +113,7 @@ cloudsec-auditor/
 ├── checks/
 │   ├── cloudtrail_checks.py
 │   ├── ec2_checks.py
+│   ├── guardduty_checks.py
 │   ├── iam_checks.py
 │   └── s3_checks.py
 │
@@ -157,9 +159,9 @@ cloudsec-auditor/
 
 ## AWS GuardDuty
 
-- ⬜ GuardDuty enabled
-- ⬜ Active findings
+- ⬜ Active GuardDuty findings
 - ⬜ Finding severity summary
+- ⬜ Malware protection status
 
 ## AWS Security Hub
 
@@ -184,13 +186,14 @@ cloudsec-auditor/
 # 🎯 Skills Demonstrated
 
 - Python programming
-- AWS SDK (Boto3)
+- AWS SDK for Python (Boto3)
 - AWS API automation
 - Cloud Security auditing
-- Amazon S3 Security
-- IAM Security
-- EC2 Security
-- CloudTrail
+- Amazon S3 security
+- AWS IAM security
+- Amazon EC2 security
+- AWS CloudTrail
+- AWS GuardDuty
 - Multi-region AWS resource discovery
 - Command-line tooling
 - Git & GitHub workflows
@@ -201,4 +204,4 @@ cloudsec-auditor/
 
 CloudSec Auditor is being developed as a practical Cloud Security portfolio project that demonstrates the type of automation performed by Cloud Security and DevSecOps Engineers.
 
-The long-term goal is to evolve the project into a lightweight AWS security auditing framework capable of auditing multiple AWS services, producing structured compliance reports and identifying security misconfigurations across AWS environments.
+The long-term goal is to evolve the project into a lightweight AWS security auditing framework capable of auditing multiple AWS services, producing structured compliance reports, and identifying security misconfigurations across AWS environments.
