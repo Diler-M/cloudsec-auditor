@@ -1,10 +1,10 @@
 import boto3
+from utils.aws import get_all_regions
+
 
 
 def check_ec2_sg(summary):
-    ec2 = boto3.client("ec2")
-
-    regions = ec2.describe_regions()
+    regions = get_all_regions()
 
     risky_ports = {
         22: "SSH",
@@ -15,7 +15,7 @@ def check_ec2_sg(summary):
 
     print("\nEC2 Security Group Audit:\n")
 
-    for region in regions["Regions"]:
+    for region in regions:
         region_name = region["RegionName"]
 
         regional_ec2 = boto3.client("ec2", region_name=region_name)

@@ -1,17 +1,16 @@
 import boto3
+from utils.aws import get_all_regions
 
 
 def check_guardduty_enabled(summary):
-    ec2 = boto3.client("ec2")
-
-    regions = ec2.describe_regions()
+    regions = get_all_regions()
 
     enabled_regions = 0
     missing_regions = 0
 
     print("\nGuardDuty Audit:\n")
 
-    for region in regions["Regions"]:
+    for region in regions:
         region_name = region["RegionName"]
 
         guardduty = boto3.client("guardduty", region_name=region_name)
