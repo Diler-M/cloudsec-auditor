@@ -1,53 +1,55 @@
 # 🔒 CloudSec Auditor
 
-CloudSec Auditor is a Python-based AWS security auditing tool built using **Boto3**.
+CloudSec Auditor is a modular Python-based AWS security auditing framework built using **Boto3**.
 
 The project automates common AWS security checks across multiple AWS services to identify security misconfigurations, improve cloud security posture, and demonstrate practical Cloud Security and DevSecOps engineering skills.
 
-Instead of manually inspecting resources through the AWS Console, CloudSec Auditor queries AWS APIs directly to perform automated security audits.
+Rather than manually inspecting resources through the AWS Console, CloudSec Auditor queries AWS APIs directly and performs automated security audits.
 
 ---
 
-# ✨ Features
+# ✨ Current Features
 
 ## Amazon S3
 
 - ✅ Audit Block Public Access
-- ✅ Audit default server-side encryption
-- ✅ Audit bucket versioning
+- ✅ Audit Default Server-Side Encryption
+- ✅ Audit Bucket Versioning
 
 ## AWS IAM
 
-- ✅ Audit MFA enforcement
-- ✅ Audit IAM access key age
+- ✅ Audit MFA Enforcement
+- ✅ Audit Access Key Age
 
 ## Amazon EC2
 
-- ✅ Multi-region Security Group discovery
+- ✅ Multi-region Security Group Discovery
 - ✅ Detect Security Groups exposing SSH (22)
 - ✅ Detect Security Groups exposing RDP (3389)
 
 ## AWS CloudTrail
 
-- ✅ Audit CloudTrail trail configuration
+- ✅ Audit CloudTrail Trail Configuration
 
 ## AWS GuardDuty
 
-- ✅ Multi-region GuardDuty enabled audit
+- ✅ Multi-region GuardDuty Enabled Audit
 
 ## AWS Security Hub
 
-- ✅ Audit Security Hub enabled status
+- ✅ Audit Security Hub Enabled Status
 
-## Command Line Interface
+---
 
-Run all checks:
+# 💻 Command Line Interface
+
+Run every audit:
 
 ```bash
 python main.py --all
 ```
 
-Run individual services:
+Run individual audits:
 
 ```bash
 python main.py --s3
@@ -60,70 +62,76 @@ python main.py --securityhub
 
 ---
 
+# 🏗 Project Architecture
+
+CloudSec Auditor follows a modular architecture to separate AWS auditing logic, shared utilities, reporting, and data models.
+
+```
+               main.py
+                   │
+        ┌──────────┴──────────┐
+        │                     │
+     checks/             reporting/
+        │                     │
+        └──────────┬──────────┘
+                   │
+              models/
+                   │
+               utils/
+```
+
+## Folder Structure
+
+```text
+cloudsec-auditor/
+│
+├── checks/
+│   ├── cloudtrail_checks.py
+│   ├── ec2_checks.py
+│   ├── guardduty_checks.py
+│   ├── iam_checks.py
+│   ├── s3_checks.py
+│   └── securityhub_checks.py
+│
+├── models/
+│   ├── finding.py
+│   └── __init__.py
+│
+├── reporting/
+│   ├── console.py
+│   └── __init__.py
+│
+├── utils/
+│   ├── aws.py
+│   └── __init__.py
+│
+├── docs/
+├── reports/
+│
+├── main.py
+├── requirements.txt
+├── README.md
+├── LICENSE
+└── .gitignore
+```
+
+---
+
 # 📋 Supported Audits
 
-| AWS Service | Audit | Status |
-|-------------|-------|:------:|
+| Service | Audit | Status |
+|----------|-----------------------------|:------:|
 | S3 | Block Public Access | ✅ |
 | S3 | Default Encryption | ✅ |
 | S3 | Bucket Versioning | ✅ |
 | IAM | MFA Enabled | ✅ |
 | IAM | Access Key Age | ✅ |
-| EC2 | Security Groups exposing SSH | ✅ |
-| EC2 | Security Groups exposing RDP | ✅ |
+| EC2 | SSH Exposure | ✅ |
+| EC2 | RDP Exposure | ✅ |
 | EC2 | Multi-region Discovery | ✅ |
 | CloudTrail | Trail Detection | ✅ |
 | GuardDuty | Multi-region Enabled Audit | ✅ |
 | Security Hub | Enabled Audit | ✅ |
-
----
-
-# 📋 Example Output
-
-```text
-S3 Bucket Public Access Audit
-
-PASS: terraform-statefile-diler blocks public access
-
-S3 Bucket Encryption Audit
-
-PASS: terraform-statefile-diler has default encryption enabled using AES256
-
-S3 Bucket Versioning Audit
-
-WARN: terraform-statefile-diler does not have versioning enabled
-
-IAM MFA Audit
-
-PASS: Diler has MFA enabled
-
-IAM Access Key Age Audit
-
-PASS: Diler access key is 0 days old
-
-EC2 Security Group Audit
-
-WARN: eu-west-1 - launch-wizard-1 (sg-xxxxxxxxxxxxxxxxx) allows SSH from 0.0.0.0/0
-
-CloudTrail Audit
-
-PASS: CloudTrail trail found: management-events
-
-GuardDuty Audit
-
-PASS: GuardDuty enabled in 1 region(s)
-WARN: GuardDuty missing from 17 region(s)
-
-Security Hub Audit
-
-WARN: Security Hub is not enabled
-
-CloudSec Auditor Summary
-
-PASS: 6
-WARN: 3
-FAIL: 0
-```
 
 ---
 
@@ -138,95 +146,86 @@ FAIL: 0
 
 ---
 
-# 📁 Project Structure
+# 🧠 Design Principles
 
-```text
-cloudsec-auditor/
-│
-├── checks/
-│   ├── cloudtrail_checks.py
-│   ├── ec2_checks.py
-│   ├── guardduty_checks.py
-│   ├── iam_checks.py
-│   ├── s3_checks.py
-│   └── securityhub_checks.py
-│
-├── docs/
-├── reports/
-├── main.py
-├── requirements.txt
-├── README.md
-└── LICENSE
-```
+The project is gradually being refactored from a collection of scripts into a reusable security auditing framework.
+
+Current design principles include:
+
+- Modular architecture
+- Separation of concerns
+- Shared AWS utility functions
+- Reusable Finding data model
+- Centralised console reporting
+- Multi-region AWS support
+- Command-line interface
 
 ---
 
 # 🚧 Roadmap
 
-## Amazon S3
+## AWS Services
 
-- ⬜ Bucket policy analysis
-- ⬜ Lifecycle policy audit
-- ⬜ Access logging audit
-- ⬜ KMS encryption validation
+### Amazon S3
 
-## AWS IAM
+- ⬜ Bucket Policy Analysis
+- ⬜ Lifecycle Policy Audit
+- ⬜ Access Logging Audit
+- ⬜ KMS Encryption Validation
 
-- ⬜ Administrator account detection
-- ⬜ Unused IAM users
-- ⬜ Password policy audit
-- ⬜ Console login audit
-- ⬜ IAM role audit
+### AWS IAM
 
-## Amazon EC2
+- ⬜ Administrator Detection
+- ⬜ Unused IAM Users
+- ⬜ Password Policy Audit
+- ⬜ Console Login Audit
 
-- ⬜ Public EC2 instance detection
-- ⬜ EBS encryption audit
-- ⬜ IMDSv2 enforcement
+### Amazon EC2
+
+- ⬜ Public EC2 Instance Detection
+- ⬜ IMDSv2 Enforcement
+- ⬜ EBS Encryption Audit
 - ⬜ Security Groups allowing all traffic
 
-## AWS CloudTrail
+### AWS CloudTrail
 
-- ⬜ Multi-region trail validation
-- ⬜ Log file validation
-- ⬜ Management event validation
-- ⬜ Data event validation
+- ⬜ Management Event Validation
+- ⬜ Data Event Validation
+- ⬜ Multi-region Trail Validation
 
-## AWS GuardDuty
+### AWS GuardDuty
 
-- ⬜ Active findings
-- ⬜ Malware protection status
-- ⬜ Finding severity summary
+- ⬜ Active Findings
+- ⬜ Malware Protection Status
+- ⬜ Finding Severity Summary
 
-## AWS Security Hub
+### AWS Security Hub
 
-- ⬜ Failed security controls
-- ⬜ Security score
-- ⬜ High severity findings
+- ⬜ High Severity Findings
+- ⬜ Failed Security Controls
+- ⬜ Security Score
 
-## AWS Config
+### AWS Config
 
-- ⬜ AWS Config enabled
-- ⬜ Compliance rule audit
-- ⬜ Non-compliant resources
+- ⬜ AWS Config Enabled
+- ⬜ Compliance Rules
+- ⬜ Non-compliant Resources
 
-## Reporting
+---
 
-- ⬜ JSON report generation
-- ⬜ CSV report generation
-- ⬜ HTML dashboard
-- ⬜ Finding severity (Low / Medium / High / Critical)
+## Framework Improvements
+
+- ⬜ Finding-based reporting for every audit
+- ⬜ JSON reports
+- ⬜ CSV reports
+- ⬜ HTML reports
+- ⬜ Severity scoring
 - ⬜ Logging
-
-## Engineering Improvements
-
-- ⬜ GitHub Issues
-- ⬜ GitHub Milestones
-- ⬜ CHANGELOG.md
-- ⬜ GitHub Actions (CI)
-- ⬜ Unit Tests
-- ⬜ Type Hints
-- ⬜ Shared AWS utility functions
+- ⬜ GitHub Actions CI
+- ⬜ Unit tests
+- ⬜ Type hints
+- ⬜ CHANGELOG
+- ⬜ GitHub Releases
 
 ---
 
@@ -236,13 +235,14 @@ cloudsec-auditor/
 - AWS SDK for Python (Boto3)
 - AWS API automation
 - Cloud Security auditing
-- Amazon S3 Security
-- AWS IAM Security
-- Amazon EC2 Security
+- AWS IAM
+- Amazon S3
+- Amazon EC2
 - AWS CloudTrail
 - AWS GuardDuty
 - AWS Security Hub
 - Multi-region AWS resource discovery
+- Software architecture & refactoring
 - Command-line tooling (argparse)
 - Git & GitHub workflows
 
@@ -252,4 +252,4 @@ cloudsec-auditor/
 
 CloudSec Auditor is being developed as a practical Cloud Security portfolio project that demonstrates the type of automation performed by Cloud Security and DevSecOps Engineers.
 
-The long-term vision is to evolve CloudSec Auditor into a lightweight AWS security auditing framework capable of auditing multiple AWS services, generating structured compliance reports, and identifying security misconfigurations across AWS environments.
+The long-term goal is to evolve the project into a lightweight AWS security auditing framework capable of auditing multiple AWS services, generating structured findings, producing multiple report formats, and helping improve AWS security posture.

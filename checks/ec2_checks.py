@@ -1,6 +1,8 @@
 import boto3
-from utils.aws import get_all_regions
 
+from models.finding import Finding
+from reporting.console import print_finding
+from utils.aws import get_all_regions
 
 
 def check_ec2_sg(summary):
@@ -36,14 +38,31 @@ def check_ec2_sg(summary):
                     if cidr == "0.0.0.0/0" and from_port in risky_ports:
                         service = risky_ports[from_port]
 
-                        print(
-                            f"WARN: {region_name} - {security_group_name} "
-                            f"({security_group_id}) allows {service} from 0.0.0.0/0"
+                        finding = Finding(
+                            service="EC2",
+                            check="Security Group Exposure",
+                            resource=f"{security_group_name} ({security_group_id})",
+                            status="WARN",
+                            severity="HIGH",
+                            message=f"Allows {service} from 0.0.0.0/0",
+                            recommendation="Restrict access to trusted IP ranges instead of 0.0.0.0/0.",
+                            region=region_name,
                         )
 
+                        print_finding(finding)
                         summary["WARN"] += 1
                         found_risky_rule = True
 
     if not found_risky_rule:
-        print("PASS: No risky Security Group rules found")
+        finding = Finding(
+            service="EC2",
+            check="Security Group Exposure",
+            resource="Security Groups",
+            status="PASS",
+            severity="INFO",
+            message="No risky Security Group rules found",
+            recommendation="No action required.",
+        )
+
+        print_finding(finding)
         summary["PASS"] += 1
