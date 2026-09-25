@@ -1,4 +1,8 @@
 import boto3
+from botocore.exceptions import ClientError
+
+from models.finding import Finding
+from reporting.console import print_finding
 
 
 def check_bucket_public_access(summary):
@@ -24,15 +28,52 @@ def check_bucket_public_access(summary):
                 and config["BlockPublicPolicy"]
                 and config["RestrictPublicBuckets"]
             ):
-                print(f"PASS: {bucket_name} blocks public access")
+                finding = Finding(
+                    service="S3",
+                    check="Block Public Access",
+                    resource=bucket_name,
+                    status="PASS",
+                    severity="INFO",
+                    message="Bucket blocks public access",
+                    recommendation="No action required.",
+                )
+
                 summary["PASS"] += 1
+
             else:
-                print(f"FAIL: {bucket_name} may allow public access")
+                finding = Finding(
+                    service="S3",
+                    check="Block Public Access",
+                    resource=bucket_name,
+                    status="FAIL",
+                    severity="HIGH",
+                    message="Bucket does not have all public access protections enabled",
+                    recommendation="Enable all four S3 Block Public Access settings.",
+                )
+
                 summary["FAIL"] += 1
 
-        except Exception:
-            print(f"WARN: {bucket_name} has no Public Access Block configuration")
-            summary["WARN"] += 1
+            print_finding(finding)
+
+        except ClientError as error:
+            error_code = error.response["Error"]["Code"]
+
+            if error_code == "NoSuchPublicAccessBlock":
+                finding = Finding(
+                    service="S3",
+                    check="Block Public Access",
+                    resource=bucket_name,
+                    status="WARN",
+                    severity="HIGH",
+                    message="Bucket has no Public Access Block configuration",
+                    recommendation="Enable S3 Block Public Access for the bucket.",
+                )
+
+                print_finding(finding)
+                summary["WARN"] += 1
+
+            else:
+                raise
 
 
 def check_bucket_encryption(summary):
@@ -52,14 +93,42 @@ def check_bucket_encryption(summary):
 
             rules = response["ServerSideEncryptionConfiguration"]["Rules"]
 
-            encryption_type = rules[0]["ApplyServerSideEncryptionByDefault"]["SSEAlgorithm"]
+            encryption_type = rules[0][
+                "ApplyServerSideEncryptionByDefault"
+            ]["SSEAlgorithm"]
 
-            print(f"PASS: {bucket_name} has default encryption enabled using {encryption_type}")
+            finding = Finding(
+                service="S3",
+                check="Default Encryption",
+                resource=bucket_name,
+                status="PASS",
+                severity="INFO",
+                message=f"Default encryption enabled using {encryption_type}",
+                recommendation="No action required.",
+            )
+
+            print_finding(finding)
             summary["PASS"] += 1
 
-        except Exception:
-            print(f"FAIL: {bucket_name} does not have default encryption enabled")
-            summary["FAIL"] += 1
+        except ClientError as error:
+            error_code = error.response["Error"]["Code"]
+
+            if error_code == "ServerSideEncryptionConfigurationNotFoundError":
+                finding = Finding(
+                    service="S3",
+                    check="Default Encryption",
+                    resource=bucket_name,
+                    status="FAIL",
+                    severity="HIGH",
+                    message="Bucket does not have default encryption enabled",
+                    recommendation="Enable default server-side encryption for the S3 bucket.",
+                )
+
+                print_finding(finding)
+                summary["FAIL"] += 1
+
+            else:
+                raise
 
 
 def check_bucket_versioning(summary):
@@ -79,8 +148,29 @@ def check_bucket_versioning(summary):
         status = response.get("Status", "Disabled")
 
         if status == "Enabled":
-            print(f"PASS: {bucket_name} has versioning enabled")
+            finding = Finding(
+                service="S3",
+                check="Bucket Versioning",
+                resource=bucket_name,
+                status="PASS",
+                severity="INFO",
+                message="Bucket versioning is enabled",
+                recommendation="No action required.",
+            )
+
+            print_finding(finding)
             summary["PASS"] += 1
+
         else:
-            print(f"WARN: {bucket_name} does not have versioning enabled")
+            finding = Finding(
+                service="S3",
+                check="Bucket Versioning",
+                resource=bucket_name,
+                status="WARN",
+                severity="MEDIUM",
+                message="Bucket versioning is not enabled",
+                recommendation="Enable S3 Versioning to improve protection against accidental deletion or overwrite.",   
+            )
+
+            print_finding(finding)
             summary["WARN"] += 1
