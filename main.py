@@ -1,5 +1,7 @@
 import argparse
 
+from reporting.console import print_finding
+
 from checks.s3_checks import (
     check_bucket_public_access,
     check_bucket_encryption,
@@ -25,6 +27,10 @@ def print_summary(summary):
     print(f"WARN: {summary['WARN']}")
     print(f"FAIL: {summary['FAIL']}")
 
+def process_findings(findings, summary):
+    for finding in findings:
+        print_finding(finding)
+        summary[finding.status] += 1
 
 def main():
     parser = argparse.ArgumentParser(
@@ -94,7 +100,11 @@ def main():
         check_ec2_sg(summary)
 
     if args.cloudtrail or args.all:
-        check_cloudtrail_enabled(summary)
+        findings = check_cloudtrail_enabled()
+
+    print("\nCloudTrail Audit:\n")
+
+    process_findings(findings, summary)
 
     if args.guardduty or args.all:
         check_guardduty_enabled(summary)

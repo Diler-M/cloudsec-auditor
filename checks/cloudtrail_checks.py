@@ -1,13 +1,12 @@
 import boto3
 
 from models.finding import Finding
-from reporting.console import print_finding
 
 
-def check_cloudtrail_enabled(summary):
+def check_cloudtrail_enabled():
     cloudtrail = boto3.client("cloudtrail")
 
-    print("\nCloudTrail Audit:\n")
+    findings = []
 
     trails = cloudtrail.describe_trails()
 
@@ -25,8 +24,7 @@ def check_cloudtrail_enabled(summary):
                 recommendation="No action required.",
             )
 
-            print_finding(finding)
-            summary["PASS"] += 1
+            findings.append(finding)
 
     else:
         finding = Finding(
@@ -39,5 +37,6 @@ def check_cloudtrail_enabled(summary):
             recommendation="Configure AWS CloudTrail to record account activity.",
         )
 
-        print_finding(finding)
-        summary["WARN"] += 1
+        findings.append(finding)
+
+    return findings
