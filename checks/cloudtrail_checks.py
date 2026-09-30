@@ -1,5 +1,8 @@
 import boto3
 
+from models.finding import Finding
+from reporting.console import print_finding
+
 
 def check_cloudtrail_enabled(summary):
     cloudtrail = boto3.client("cloudtrail")
@@ -11,8 +14,30 @@ def check_cloudtrail_enabled(summary):
     if len(trails["trailList"]) > 0:
         for trail in trails["trailList"]:
             trail_name = trail["Name"]
-            print(f"PASS: CloudTrail trail found: {trail_name}")
+
+            finding = Finding(
+                service="CloudTrail",
+                check="Trail Detection",
+                resource=trail_name,
+                status="PASS",
+                severity="INFO",
+                message="CloudTrail trail is configured",
+                recommendation="No action required.",
+            )
+
+            print_finding(finding)
             summary["PASS"] += 1
+
     else:
-        print("WARN: No CloudTrail trails found")
+        finding = Finding(
+            service="CloudTrail",
+            check="Trail Detection",
+            resource="CloudTrail",
+            status="WARN",
+            severity="HIGH",
+            message="No CloudTrail trails found",
+            recommendation="Configure AWS CloudTrail to record account activity.",
+        )
+
+        print_finding(finding)
         summary["WARN"] += 1
