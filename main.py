@@ -15,10 +15,11 @@ from checks.iam_checks import (
 
 from checks.ec2_checks import check_ec2_sg
 from checks.cloudtrail_checks import check_cloudtrail_enabled
-
 from checks.guardduty_checks import check_guardduty_enabled
-
 from checks.securityhub_checks import check_securityhub_enabled
+from checks.macie_checks import check_macie_enabled, check_macie_findings
+
+
 
 
 def print_summary(summary):
@@ -83,6 +84,12 @@ def main():
         help="Run all security checks"
     )
 
+    parser.add_argument(
+    "--macie",
+    action="store_true",
+    help="Run Amazon Macie audit"
+    )
+
     args = parser.parse_args()
 
     summary = {
@@ -128,7 +135,7 @@ def main():
 
         print("\nEC2 Security Group Audit:\n")
 
-    process_findings(findings, summary)
+        process_findings(findings, summary)
 
     if args.cloudtrail or args.all:
         findings = check_cloudtrail_enabled()
@@ -148,6 +155,19 @@ def main():
         findings = check_securityhub_enabled()
 
         print("\nSecurity Hub Audit:\n")
+
+        process_findings(findings, summary)
+
+    if args.macie or args.all:
+        findings = check_macie_enabled()
+
+        print("\nAmazon Macie Audit:\n")
+
+        process_findings(findings, summary)
+
+        findings = check_macie_findings()
+
+        print("\nAmazon Macie Sensitive Data Findings:\n")
 
         process_findings(findings, summary)
 

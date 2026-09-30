@@ -36,7 +36,7 @@ def check_bucket_public_access():
                     recommendation="No action required.",
                 )
 
-                summary["PASS"] += 1
+                findings.append(finding)
 
             else:
                 finding = Finding(
