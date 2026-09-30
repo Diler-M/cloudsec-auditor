@@ -28,6 +28,10 @@ def print_summary(summary):
     print(f"FAIL: {summary['FAIL']}")
 
 def process_findings(findings, summary):
+    if not findings:
+        print("INFO: No applicable resources found.\n")
+        return
+
     for finding in findings:
         print_finding(finding)
         summary[finding.status] += 1
@@ -88,29 +92,64 @@ def main():
     }
 
     if args.s3 or args.all:
-        check_bucket_public_access(summary)
-        check_bucket_encryption(summary)
-        check_bucket_versioning(summary)
+        findings = check_bucket_public_access()
+
+        print("\nS3 Bucket Public Access Audit:\n")
+
+        process_findings(findings, summary)
+
+        findings = check_bucket_encryption()
+
+        print("\nS3 Bucket Encryption Audit:\n")
+
+        process_findings(findings, summary)
+
+        findings = check_bucket_versioning()
+
+        print("\nS3 Bucket Versioning Audit:\n")
+
+        process_findings(findings, summary)
 
     if args.iam or args.all:
-        check_iam_mfa(summary)
-        check_access_key_age(summary)
+        findings = check_iam_mfa()
+
+        print("\nIAM MFA Audit:\n")
+
+        process_findings(findings, summary)
+
+        findings = check_access_key_age()
+
+        print("\nIAM Access Key Age Audit:\n")
+
+        process_findings(findings, summary)
 
     if args.ec2 or args.all:
-        check_ec2_sg(summary)
+        findings = check_ec2_sg()
+
+        print("\nEC2 Security Group Audit:\n")
+
+    process_findings(findings, summary)
 
     if args.cloudtrail or args.all:
         findings = check_cloudtrail_enabled()
 
-    print("\nCloudTrail Audit:\n")
+        print("\nCloudTrail Audit:\n")
 
-    process_findings(findings, summary)
+        process_findings(findings, summary)
 
     if args.guardduty or args.all:
-        check_guardduty_enabled(summary)
+        findings = check_guardduty_enabled()
+
+        print("\nGuardDuty Audit:\n")
+
+        process_findings(findings, summary)
 
     if args.securityhub or args.all:
-        check_securityhub_enabled(summary)
+        findings = check_securityhub_enabled()
+
+        print("\nSecurity Hub Audit:\n")
+
+        process_findings(findings, summary)
 
     print_summary(summary)
 

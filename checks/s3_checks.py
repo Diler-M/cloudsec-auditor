@@ -2,15 +2,13 @@ import boto3
 from botocore.exceptions import ClientError
 
 from models.finding import Finding
-from reporting.console import print_finding
 
 
-def check_bucket_public_access(summary):
+def check_bucket_public_access():
     s3 = boto3.client("s3")
-
+    findings = []
+    
     buckets = s3.list_buckets()
-
-    print("\nS3 Bucket Public Access Audit:\n")
 
     for bucket in buckets["Buckets"]:
         bucket_name = bucket["Name"]
@@ -51,9 +49,7 @@ def check_bucket_public_access(summary):
                     recommendation="Enable all four S3 Block Public Access settings.",
                 )
 
-                summary["FAIL"] += 1
-
-            print_finding(finding)
+                findings.append(finding)
 
         except ClientError as error:
             error_code = error.response["Error"]["Code"]
@@ -69,19 +65,19 @@ def check_bucket_public_access(summary):
                     recommendation="Enable S3 Block Public Access for the bucket.",
                 )
 
-                print_finding(finding)
-                summary["WARN"] += 1
+                findings.append(finding)
 
             else:
                 raise
 
+    return findings
 
-def check_bucket_encryption(summary):
+
+def check_bucket_encryption():
     s3 = boto3.client("s3")
+    findings = []
 
     buckets = s3.list_buckets()
-
-    print("\nS3 Bucket Encryption Audit:\n")
 
     for bucket in buckets["Buckets"]:
         bucket_name = bucket["Name"]
@@ -107,8 +103,7 @@ def check_bucket_encryption(summary):
                 recommendation="No action required.",
             )
 
-            print_finding(finding)
-            summary["PASS"] += 1
+            findings.append(finding)
 
         except ClientError as error:
             error_code = error.response["Error"]["Code"]
@@ -124,19 +119,19 @@ def check_bucket_encryption(summary):
                     recommendation="Enable default server-side encryption for the S3 bucket.",
                 )
 
-                print_finding(finding)
-                summary["FAIL"] += 1
+                findings.append(finding)
 
             else:
                 raise
 
+    return findings
 
-def check_bucket_versioning(summary):
+
+def check_bucket_versioning():
     s3 = boto3.client("s3")
+    findings = []
 
     buckets = s3.list_buckets()
-
-    print("\nS3 Bucket Versioning Audit:\n")
 
     for bucket in buckets["Buckets"]:
         bucket_name = bucket["Name"]
@@ -158,8 +153,7 @@ def check_bucket_versioning(summary):
                 recommendation="No action required.",
             )
 
-            print_finding(finding)
-            summary["PASS"] += 1
+            findings.append(finding)
 
         else:
             finding = Finding(
@@ -172,5 +166,6 @@ def check_bucket_versioning(summary):
                 recommendation="Enable S3 Versioning to improve protection against accidental deletion or overwrite.",   
             )
 
-            print_finding(finding)
-            summary["WARN"] += 1
+            findings.append(finding)
+
+    return findings

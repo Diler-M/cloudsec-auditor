@@ -1,17 +1,15 @@
 import boto3
 
 from models.finding import Finding
-from reporting.console import print_finding
 from utils.aws import get_all_regions
 
+findings = []
 
-def check_guardduty_enabled(summary):
+def check_guardduty_enabled():
     regions = get_all_regions()
 
     enabled_regions = 0
     missing_regions = 0
-
-    print("\nGuardDuty Audit:\n")
 
     for region in regions:
         region_name = region["RegionName"]
@@ -39,8 +37,7 @@ def check_guardduty_enabled(summary):
             recommendation="No action required.",
         )
 
-        print_finding(finding)
-        summary["PASS"] += 1
+        findings.append(finding)
 
     if missing_regions > 0:
         finding = Finding(
@@ -53,5 +50,6 @@ def check_guardduty_enabled(summary):
             recommendation="Review the affected regions and enable GuardDuty where monitoring is required.",
         )
 
-        print_finding(finding)
-        summary["WARN"] += 1
+        findings.append(finding)
+
+    return findings

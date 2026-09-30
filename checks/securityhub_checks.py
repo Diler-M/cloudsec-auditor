@@ -2,13 +2,11 @@ import boto3
 from botocore.exceptions import ClientError
 
 from models.finding import Finding
-from reporting.console import print_finding
 
+findings = []
 
-def check_securityhub_enabled(summary):
+def check_securityhub_enabled():
     securityhub = boto3.client("securityhub")
-
-    print("\nSecurity Hub Audit:\n")
 
     try:
         securityhub.describe_hub()
@@ -23,8 +21,7 @@ def check_securityhub_enabled(summary):
             recommendation="No action required.",
         )
 
-        print_finding(finding)
-        summary["PASS"] += 1
+        findings.append(finding)
 
     except ClientError as error:
         error_code = error.response["Error"]["Code"]
@@ -40,8 +37,9 @@ def check_securityhub_enabled(summary):
                 recommendation="Enable AWS Security Hub to centralise security findings and security posture monitoring.",
             )
 
-            print_finding(finding)
-            summary["WARN"] += 1
+            findings.append(finding)
 
         else:
             raise
+
+        return findings

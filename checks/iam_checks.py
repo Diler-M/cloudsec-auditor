@@ -3,14 +3,12 @@ from datetime import datetime, timezone
 from botocore.exceptions import ClientError
 
 from models.finding import Finding
-from reporting.console import print_finding
 
-def check_iam_mfa(summary):
+def check_iam_mfa():
     iam = boto3.client("iam")
+    findings = []
 
     users = iam.list_users()
-
-    print("\nIAM MFA Audit:\n")
 
     for user in users["Users"]:
         user_name = user["UserName"]
@@ -41,8 +39,7 @@ def check_iam_mfa(summary):
                 recommendation="No action required.",
             )
 
-            print_finding(finding)
-            summary["PASS"] += 1
+            findings.append(finding)
 
         else:
             finding = Finding(
@@ -55,15 +52,15 @@ def check_iam_mfa(summary):
                 recommendation="Enable MFA for the IAM user's console access.",
             )
 
-            print_finding(finding)
-            summary["WARN"] += 1
+            findings.append(finding)
 
-def check_access_key_age(summary):
+    return findings
+
+def check_access_key_age():
     iam = boto3.client("iam")
+    findings = []
 
     users = iam.list_users()
-
-    print("\nIAM Access Key Age Audit:\n")
 
     today = datetime.now(timezone.utc)
 
@@ -91,7 +88,7 @@ def check_access_key_age(summary):
                     recommendation="No action required.",
                 )
 
-                summary["PASS"] += 1
+                findings.append(finding)
 
             else:
                 finding = Finding(
@@ -104,6 +101,6 @@ def check_access_key_age(summary):
                     recommendation="Rotate access keys older than 90 days.",
                 )
 
-                summary["WARN"] += 1
+                findings.append(finding)
 
-            print_finding(finding)
+    return findings

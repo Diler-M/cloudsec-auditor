@@ -5,8 +5,9 @@ from reporting.console import print_finding
 from utils.aws import get_all_regions
 
 
-def check_ec2_sg(summary):
+def check_ec2_sg():
     regions = get_all_regions()
+    findings = []
 
     risky_ports = {
         22: "SSH",
@@ -14,8 +15,6 @@ def check_ec2_sg(summary):
     }
 
     found_risky_rule = False
-
-    print("\nEC2 Security Group Audit:\n")
 
     for region in regions:
         region_name = region["RegionName"]
@@ -49,8 +48,7 @@ def check_ec2_sg(summary):
                             region=region_name,
                         )
 
-                        print_finding(finding)
-                        summary["WARN"] += 1
+                        findings.append(finding)
                         found_risky_rule = True
 
     if not found_risky_rule:
@@ -64,5 +62,6 @@ def check_ec2_sg(summary):
             recommendation="No action required.",
         )
 
-        print_finding(finding)
-        summary["PASS"] += 1
+        findings.append(finding)
+
+    return findings
