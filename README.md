@@ -1,55 +1,57 @@
-# 🔒 CloudSec Auditor
+# CloudSec Auditor
 
-CloudSec Auditor is a modular Python-based AWS security auditing framework built using **Boto3**.
+CloudSec Auditor is an AWS security auditing tool that identifies common cloud security misconfigurations and sensitive data risks.
 
-The project automates common AWS security checks across multiple AWS services to identify security misconfigurations, improve cloud security posture, and demonstrate practical Cloud Security and DevSecOps engineering skills.
+It assesses security controls across AWS services, provides remediation guidance, and supports both console and JSON reporting.
 
-Rather than manually inspecting resources through the AWS Console, CloudSec Auditor queries AWS APIs directly and performs automated security audits.
+## Security Checks
 
----
+CloudSec Auditor currently assesses:
 
-# ✨ Current Features
+- **Amazon S3** - public access, encryption and versioning
+- **AWS IAM** - MFA and access key age
+- **Amazon EC2** - exposed SSH and RDP security group rules
+- **AWS CloudTrail** - trail availability
+- **Amazon GuardDuty** - regional threat detection coverage
+- **AWS Security Hub** - security posture monitoring
+- **Amazon Macie** - sensitive data discovery in S3
 
-## Amazon S3
+Findings are classified as `PASS`, `WARN` or `FAIL` and include remediation guidance.
 
-- ✅ Audit Block Public Access
-- ✅ Audit Default Server-Side Encryption
-- ✅ Audit Bucket Versioning
+## Sensitive Data Discovery
 
-## AWS IAM
+Amazon Macie integration extends the project beyond infrastructure configuration into data security.
 
-- ✅ Audit MFA Enforcement
-- ✅ Audit Access Key Age
+A controlled S3 lab containing synthetic customer data was created and analysed using Macie. The assessment identified six occurrences of credit card number data and generated a high-severity financial information finding.
 
-## Amazon EC2
+CloudSec Auditor retrieved and surfaced the finding:
 
-- ✅ Multi-region Security Group Discovery
-- ✅ Detect Security Groups exposing SSH (22)
-- ✅ Detect Security Groups exposing RDP (3389)
+```text
+FAIL: eu-west-2 - cloudsec-auditor-macie-lab-1/Synthetic_Data.csv - Macie detected 6 occurrence(s) of CREDIT_CARD_NUMBER
+Recommendation: Review the sensitive data, confirm whether it is required, and restrict access or remove it where appropriate.
+```
 
-## AWS CloudTrail
+No real personal or payment information was used.
 
-- ✅ Audit CloudTrail Trail Configuration
+## Example
 
-## AWS GuardDuty
-
-- ✅ Multi-region GuardDuty Enabled Audit
-
-## AWS Security Hub
-
-- ✅ Audit Security Hub Enabled Status
-
----
-
-# 💻 Command Line Interface
-
-Run every audit:
+Run a complete audit:
 
 ```bash
 python main.py --all
 ```
 
-Run individual audits:
+Example findings:
+
+```text
+PASS: global - cloudsec-auditor-macie-lab-1 - Bucket blocks public access
+
+WARN: eu-west-2 - launch-wizard-1 (...) - Allows SSH from 0.0.0.0/0
+
+FAIL: eu-west-2 - cloudsec-auditor-macie-lab-1/Synthetic_Data.csv - Macie detected 6 occurrence(s) of CREDIT_CARD_NUMBER
+```
+
+Run an individual assessment:
 
 ```bash
 python main.py --s3
@@ -58,198 +60,63 @@ python main.py --ec2
 python main.py --cloudtrail
 python main.py --guardduty
 python main.py --securityhub
+python main.py --macie
 ```
 
----
+## JSON Reporting
 
-# 🏗 Project Architecture
+Audit results can also be exported as structured JSON:
 
-CloudSec Auditor follows a modular architecture to separate AWS auditing logic, shared utilities, reporting, and data models.
-
-```
-               main.py
-                   │
-        ┌──────────┴──────────┐
-        │                     │
-     checks/             reporting/
-        │                     │
-        └──────────┬──────────┘
-                   │
-              models/
-                   │
-               utils/
+```bash
+python main.py --all --json
 ```
 
-## Folder Structure
+Reports are generated under:
 
 ```text
-cloudsec-auditor/
-│
-├── checks/
-│   ├── cloudtrail_checks.py
-│   ├── ec2_checks.py
-│   ├── guardduty_checks.py
-│   ├── iam_checks.py
-│   ├── s3_checks.py
-│   └── securityhub_checks.py
-│
-├── models/
-│   ├── finding.py
-│   └── __init__.py
-│
-├── reporting/
-│   ├── console.py
-│   └── __init__.py
-│
-├── utils/
-│   ├── aws.py
-│   └── __init__.py
-│
-├── docs/
-├── reports/
-│
-├── main.py
-├── requirements.txt
-├── README.md
-├── LICENSE
-└── .gitignore
+reports/cloudsec-audit.json
 ```
 
----
+This provides a foundation for integration with CI/CD pipelines, dashboards and other security automation.
 
-# 📋 Supported Audits
+## Security Approach
 
-| Service | Audit | Status |
-|----------|-----------------------------|:------:|
-| S3 | Block Public Access | ✅ |
-| S3 | Default Encryption | ✅ |
-| S3 | Bucket Versioning | ✅ |
-| IAM | MFA Enabled | ✅ |
-| IAM | Access Key Age | ✅ |
-| EC2 | SSH Exposure | ✅ |
-| EC2 | RDP Exposure | ✅ |
-| EC2 | Multi-region Discovery | ✅ |
-| CloudTrail | Trail Detection | ✅ |
-| GuardDuty | Multi-region Enabled Audit | ✅ |
-| Security Hub | Enabled Audit | ✅ |
+The project focuses on:
 
----
+- Least privilege AWS access
+- Actionable security findings
+- Multi-region assessment where appropriate
+- Sensitive data discovery and classification
+- Clear remediation guidance
+- Separation of configuration security from data security
 
-# 🛠 Technologies
+For example, an S3 bucket can block public access and use encryption while still contain sensitive data that requires appropriate governance and access controls.
 
-- Python
-- Boto3
-- AWS CLI
-- Git
-- GitHub
-- VS Code
+## Installation
 
----
+```bash
+git clone <repository-url>
+cd cloudsec-auditor
+pip install -r requirements.txt
+aws configure
+python main.py --all
+```
 
-# 🧠 Design Principles
+A dedicated AWS identity with read-only security permissions should be used. AWS credentials are not stored in the repository.
 
-The project is gradually being refactored from a collection of scripts into a reusable security auditing framework.
+## Technologies
 
-Current design principles include:
+AWS, Amazon S3, IAM, EC2, CloudTrail, GuardDuty, Security Hub, Amazon Macie, Python, Boto3, JSON, Git and GitHub.
 
-- Modular architecture
-- Separation of concerns
-- Shared AWS utility functions
-- Reusable Finding data model
-- Centralised console reporting
-- Multi-region AWS support
-- Command-line interface
+## Roadmap
 
----
+- Automated testing
+- GitHub Actions CI
+- Improved EC2 security group analysis
+- CloudTrail logging-status validation
+- Expanded regional checks
+- Additional data-security controls
 
-# 🚧 Roadmap
+## Disclaimer
 
-## AWS Services
-
-### Amazon S3
-
-- ⬜ Bucket Policy Analysis
-- ⬜ Lifecycle Policy Audit
-- ⬜ Access Logging Audit
-- ⬜ KMS Encryption Validation
-
-### AWS IAM
-
-- ⬜ Administrator Detection
-- ⬜ Unused IAM Users
-- ⬜ Password Policy Audit
-- ⬜ Console Login Audit
-
-### Amazon EC2
-
-- ⬜ Public EC2 Instance Detection
-- ⬜ IMDSv2 Enforcement
-- ⬜ EBS Encryption Audit
-- ⬜ Security Groups allowing all traffic
-
-### AWS CloudTrail
-
-- ⬜ Management Event Validation
-- ⬜ Data Event Validation
-- ⬜ Multi-region Trail Validation
-
-### AWS GuardDuty
-
-- ⬜ Active Findings
-- ⬜ Malware Protection Status
-- ⬜ Finding Severity Summary
-
-### AWS Security Hub
-
-- ⬜ High Severity Findings
-- ⬜ Failed Security Controls
-- ⬜ Security Score
-
-### AWS Config
-
-- ⬜ AWS Config Enabled
-- ⬜ Compliance Rules
-- ⬜ Non-compliant Resources
-
----
-
-## Framework Improvements
-
-- ⬜ Finding-based reporting for every audit
-- ⬜ JSON reports
-- ⬜ CSV reports
-- ⬜ HTML reports
-- ⬜ Severity scoring
-- ⬜ Logging
-- ⬜ GitHub Actions CI
-- ⬜ Unit tests
-- ⬜ Type hints
-- ⬜ CHANGELOG
-- ⬜ GitHub Releases
-
----
-
-# 🎯 Skills Demonstrated
-
-- Python programming
-- AWS SDK for Python (Boto3)
-- AWS API automation
-- Cloud Security auditing
-- AWS IAM
-- Amazon S3
-- Amazon EC2
-- AWS CloudTrail
-- AWS GuardDuty
-- AWS Security Hub
-- Multi-region AWS resource discovery
-- Software architecture & refactoring
-- Command-line tooling (argparse)
-- Git & GitHub workflows
-
----
-
-# 🚀 Project Vision
-
-CloudSec Auditor is being developed as a practical Cloud Security portfolio project that demonstrates the type of automation performed by Cloud Security and DevSecOps Engineers.
-
-The long-term goal is to evolve the project into a lightweight AWS security auditing framework capable of auditing multiple AWS services, generating structured findings, producing multiple report formats, and helping improve AWS security posture.
+CloudSec Auditor is an educational and portfolio project. Findings should be reviewed in the context of the AWS environment and organisation's security requirements.
